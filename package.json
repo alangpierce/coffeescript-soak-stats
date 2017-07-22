@@ -1,0 +1,23 @@
+{
+  "name": "coffeescript-soak-stats",
+  "version": "1.0.0",
+  "description": "Collect statistics on ?. syntax used in CoffeeScript projects",
+  "main": "dist/cli.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alangpierce/coffeescript-soak-stats.git"
+  },
+  "author": "Alan Pierce",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alangpierce/coffeescript-soak-stats/issues"
+  },
+  "homepage": "https://github.com/alangpierce/coffeescript-soak-stats#readme",
+  "dependencies": {
+    "@types/node": "^8.0.14",
+    "typescript": "^2.4.2"
+  }
+}
