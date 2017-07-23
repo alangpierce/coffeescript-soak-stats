@@ -1,5 +1,3 @@
-import 'core-js/es7'
-
 import { readdir, readFile, stat } from 'mz/fs';
 import { join, resolve } from 'path';
 import { collectStats, Stats } from './stats';
@@ -25,24 +23,39 @@ async function runCli() {
   }
   const path = process.argv[2];
   const stats = new Stats();
-  for await (const coffeePath of getCoffeeFiles(path)) {
+  const coffeePaths = await getCoffeeFiles(path);
+  for (const [i, coffeePath] of coffeePaths.entries()) {
+    process.stdout.write(`\r${i + 1}/${coffeePaths.length}`);
     const source = (await readFile(coffeePath)).toString();
-    collectStats(source, stats);
+    try {
+      collectStats(source, stats);
+    } catch (e) {
+      process.stdout.write(`\rError processing file ${coffeePath}\n`);
+    }
   }
+  console.log('');
   console.log(stats.format());
 }
 
-async function* getCoffeeFiles(path: string): AsyncIterable<string> {
+async function getCoffeeFiles(path: string): Promise<Array<string>> {
+  const resultFiles = [];
   let children = await readdir(path);
   for (const child of children) {
     if (['node_modules', '.git'].includes(child)) {
       continue;
     }
     let childPath = resolve(join(path, child));
-    if ((await stat(childPath)).isDirectory()) {
-      yield* getCoffeeFiles(childPath);
-    } else if (childPath.endsWith('.coffee')) {
-      yield childPath;
+    let childStat;
+    try {
+      childStat = await stat(childPath);
+    } catch (e) {
+      continue;
+    }
+    if (childStat.isDirectory()) {
+      resultFiles.push(...await getCoffeeFiles(childPath));
+    } else if (childStat.isFile() && childPath.endsWith('.coffee')) {
+      resultFiles.push(childPath);
     }
   }
+  return resultFiles;
 }

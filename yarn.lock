@@ -2,6 +2,20 @@
 # yarn lockfile v1
 
 
+"@types/babel-types@*":
+  version "6.25.1"
+  resolved "https://registry.yarnpkg.com/@types/babel-types/-/babel-types-6.25.1.tgz#ce8f126a4403e11e1b0033a424f11638afac7889"
+
+"@types/babylon@^6.16.1":
+  version "6.16.2"
+  resolved "https://registry.yarnpkg.com/@types/babylon/-/babylon-6.16.2.tgz#062ce63b693d9af1c246f5aedf928bc9c30589c8"
+  dependencies:
+    "@types/babel-types" "*"
+
+"@types/json-stable-stringify@^1.0.31":
+  version "1.0.31"
+  resolved "https://registry.yarnpkg.com/@types/json-stable-stringify/-/json-stable-stringify-1.0.31.tgz#b6c7bc507f5267e88cd2839b3ac6a2b39b653a32"
+
 "@types/mz@^0.0.31":
   version "0.0.31"
   resolved "https://registry.yarnpkg.com/@types/mz/-/mz-0.0.31.tgz#a4d80c082fefe71e40a7c0f07d1e6555bbbc7b52"
@@ -20,9 +34,47 @@ any-promise@^1.0.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/any-promise/-/any-promise-1.3.0.tgz#abc6afeedcea52e809cdc0376aed3ce39635d17f"
 
+babylon@^6.14.1:
+  version "6.17.4"
+  resolved "https://registry.yarnpkg.com/babylon/-/babylon-6.17.4.tgz#3e8b7402b88d22c3423e137a1577883b15ff869a"
+
+coffee-lex@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/coffee-lex/-/coffee-lex-8.0.0.tgz#acdc94e8122351f254465854facba4c7afee5a6c"
+
 core-js@^2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.4.1.tgz#4de911e667b0eae9124e34254b53aea6fc618d3e"
+
+decaffeinate-coffeescript@1.10.0-patch26:
+  version "1.10.0-patch26"
+  resolved "https://registry.yarnpkg.com/decaffeinate-coffeescript/-/decaffeinate-coffeescript-1.10.0-patch26.tgz#d3f23fcb7e3d574ad38182b44ef6f62c2757fdfe"
+
+decaffeinate-parser@^19.1.0:
+  version "19.1.0"
+  resolved "https://registry.yarnpkg.com/decaffeinate-parser/-/decaffeinate-parser-19.1.0.tgz#11d7f5edad9f03167c3eed8ba05126ccf716bbb2"
+  dependencies:
+    "@types/babylon" "^6.16.1"
+    "@types/json-stable-stringify" "^1.0.31"
+    babylon "^6.14.1"
+    coffee-lex "^8.0.0"
+    decaffeinate-coffeescript "1.10.0-patch26"
+    json-stable-stringify "^1.0.1"
+    lines-and-columns "^1.1.6"
+
+json-stable-stringify@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/json-stable-stringify/-/json-stable-stringify-1.0.1.tgz#9a759d39c5f2ff503fd5300646ed445f88c4f9af"
+  dependencies:
+    jsonify "~0.0.0"
+
+jsonify@~0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/jsonify/-/jsonify-0.0.0.tgz#2c74b6ee41d93ca51b7b5aaee8f503631d252a73"
+
+lines-and-columns@^1.1.6:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.1.6.tgz#1c00c743b433cd0a4e80758f7b64a57440d9ff00"
 
 mz@^2.6.0:
   version "2.6.0"
