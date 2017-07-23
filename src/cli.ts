@@ -26,11 +26,18 @@ async function runCli() {
   const coffeePaths = await getCoffeeFiles(path);
   for (const [i, coffeePath] of coffeePaths.entries()) {
     process.stdout.write(`\r${i + 1}/${coffeePaths.length}`);
-    const source = (await readFile(coffeePath)).toString();
+    let source = (await readFile(coffeePath)).toString();
+    if (source[0] === '\uFEFF') {
+      source = source.slice(1);
+    }
+    source = source.replace(/\r\n/g, '\n');
     try {
       collectStats(source, stats);
     } catch (e) {
       process.stdout.write(`\rError processing file ${coffeePath}\n`);
+      if (process.env['SHOW_ERRORS'] === 'true') {
+        console.log(e);
+      }
     }
   }
   console.log('');
