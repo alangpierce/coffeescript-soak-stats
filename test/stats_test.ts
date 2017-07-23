@@ -3,7 +3,7 @@ import { equal } from 'assert';
 
 function getStats(source: string): Stats {
   const stats = new Stats();
-  collectStats(source, stats);
+  collectStats(source, stats, '');
   return stats;
 }
 

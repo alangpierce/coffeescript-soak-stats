@@ -1,5 +1,5 @@
-import { readdir, readFile, stat } from 'mz/fs';
-import { join, resolve } from 'path';
+import { readdir, readFile, stat, writeFile } from 'mz/fs';
+import { join, relative, resolve } from 'path';
 import { collectStats, Stats } from './stats';
 
 class CLIError extends Error {
@@ -31,10 +31,11 @@ async function runCli() {
       source = source.slice(1);
     }
     source = source.replace(/\r\n/g, '\n');
+    const resolvedPath = relative('.', coffeePath);
     try {
-      collectStats(source, stats);
+      collectStats(source, stats, resolvedPath);
     } catch (e) {
-      process.stdout.write(`\rError processing file ${coffeePath}\n`);
+      process.stdout.write(`\rError processing file ${resolvedPath}\n`);
       if (process.env['SHOW_ERRORS'] === 'true') {
         console.log(e);
       }
@@ -42,6 +43,10 @@ async function runCli() {
   }
   console.log('');
   console.log(stats.format());
+  if (stats.exampleContents) {
+    await writeFile('./soak-examples.txt', stats.exampleContents);
+    console.log('Wrote examples to soak-examples.txt');
+  }
 }
 
 async function getCoffeeFiles(path: string): Promise<Array<string>> {

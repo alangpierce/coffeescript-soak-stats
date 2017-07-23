@@ -2,11 +2,12 @@ import { parse, traverse } from 'decaffeinate-parser';
 import {
   BaseAssignOp, DeleteOp, FunctionApplication,
   SoakedDynamicMemberAccessOp, SoakedFunctionApplication, SoakedMemberAccessOp,
-  SoakedNewOp
+  SoakedNewOp, Node,
 } from 'decaffeinate-parser/dist/nodes';
 import {
   findSoakContainer, isSoakedExpression, isSoakOperation
 } from './soak-operations';
+import { formatExample } from './examples';
 
 export class Stats {
   totalFiles = 0;
@@ -22,6 +23,7 @@ export class Stats {
   numSoakedDeletes = 0;
   numSignificantParens = 0;
   numChainedSoakOperations = 0;
+  exampleContents = '';
 
   format(): string {
     return `\
@@ -41,7 +43,7 @@ Total soak operations chained on top of another soak: ${this.numChainedSoakOpera
   }
 }
 
-export function collectStats(source: string, stats: Stats): void {
+export function collectStats(source: string, stats: Stats, path: string): void {
   const program = parse(source);
   const tokens = program.context.sourceTokens;
   stats.totalFiles++;
@@ -80,6 +82,19 @@ export function collectStats(source: string, stats: Stats): void {
       if (isSoakedExpression(soakContainer)) {
         stats.numChainedSoakOperations++;
       }
+
+      if (process.env.PRINT_EXAMPLES === 'true' && shouldShowExample(node, soakContainer)) {
+        stats.exampleContents += formatExample(node, source, path);
+      }
     }
   });
+}
+
+function shouldShowExample(node: Node, soakContainer: Node): boolean {
+  if (node !== soakContainer) {
+    let isMethodSoakContainer = soakContainer instanceof FunctionApplication &&
+      soakContainer.function === node;
+    return !isMethodSoakContainer;
+  }
+  return false;
 }
