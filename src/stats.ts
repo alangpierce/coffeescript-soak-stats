@@ -1,6 +1,6 @@
 import { parse, traverse } from 'decaffeinate-parser';
 import {
-  BaseAssignOp, DeleteOp,
+  BaseAssignOp, DeleteOp, FunctionApplication,
   SoakedDynamicMemberAccessOp, SoakedFunctionApplication, SoakedMemberAccessOp,
   SoakedNewOp, SoakedSlice
 } from 'decaffeinate-parser/dist/nodes';
@@ -16,6 +16,7 @@ export class Stats {
   numSoakedNew = 0;
   numSoakedSlice = 0;
   numNonTrivialSoakContainers = 0;
+  numNonTrivialSoakContainersExcludingMethods = 0;
   numSoakedAssignments = 0;
   numSoakedDeletes = 0;
   numSignificantParens = 0;
@@ -31,6 +32,7 @@ Total soaked function applications: ${this.numSoakedFunctionApplications}
 Total soaked new invocations: ${this.numSoakedNew}
 Total soaked slice calls: ${this.numSoakedSlice}
 Total soak operations using short-circuiting: ${this.numNonTrivialSoakContainers}
+Total soak operations using short-circuiting (excluding methods): ${this.numNonTrivialSoakContainersExcludingMethods}
 Total soaked assignments (including compound assignments): ${this.numSoakedAssignments}
 Total soaked deletes: ${this.numSoakedDeletes}
 Total cases where parens affected the soak container: ${this.numSignificantParens}
@@ -61,6 +63,11 @@ export function collectStats(source: string, stats: Stats): void {
       const soakContainerIgnoringParens = findSoakContainer(node, tokens, {ignoreParens: true});
       if (soakContainer !== node) {
         stats.numNonTrivialSoakContainers++;
+        let isMethodSoakContainer = soakContainer instanceof FunctionApplication &&
+          soakContainer.function === node;
+        if (!isMethodSoakContainer) {
+          stats.numNonTrivialSoakContainersExcludingMethods++;
+        }
       }
       if (soakContainer instanceof BaseAssignOp) {
         stats.numSoakedAssignments++;

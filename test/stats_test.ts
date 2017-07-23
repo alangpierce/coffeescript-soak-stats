@@ -31,4 +31,18 @@ describe('stats', () => {
     equal(stats.numSoakOperations, 2);
     equal(stats.numNonTrivialSoakContainers, 0);
   });
+
+  it('identifies when a nontrivial soak container is just from a method', () => {
+    const stats = getStats('a?.b()');
+    equal(stats.numSoakOperations, 1);
+    equal(stats.numNonTrivialSoakContainers, 1);
+    equal(stats.numNonTrivialSoakContainersExcludingMethods, 0);
+  });
+
+  it('does not count chained methods as a method soak container', () => {
+    const stats = getStats('a?.b().c()');
+    equal(stats.numSoakOperations, 1);
+    equal(stats.numNonTrivialSoakContainers, 1);
+    equal(stats.numNonTrivialSoakContainersExcludingMethods, 1);
+  });
 });
