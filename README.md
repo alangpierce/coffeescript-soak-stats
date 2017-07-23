@@ -16,8 +16,8 @@ coffeescript-soak-stats my-project
 
 The `manual_test/clone_all_repos.py` script clones about 500,000 lines of
 CoffeeScript from various projects on GitHub. Note that I intentionally excluded
-the CoffeeScript compiler itself because its test suite isn't representative of
-real-world code.
+the CoffeeScript compiler source code because its test suite isn't
+representative of real-world code.
 
 Here's what it prints when running stats on all of them:
 
@@ -51,7 +51,7 @@ expression whose evaluation will be skipped if the soaked value is null or
 undefined. For example, in the expression `a(b?.c.d)`, the soak container is
 `b?.c.d`.
 
-### Notes and explanation
+### Explanation of each stat
 
 ```
 Error processing file atom/atom/spec/fixtures/sample-with-tabs-and-leading-comment.coffee
@@ -61,6 +61,8 @@ Error processing file sharelatex/latex-hints-sharelatex/public/app/ide/controlle
 These two files are both invalid CoffeeScript files. The first is a test fixture
 that's presumably meant to test invalid files, not sure about the second.
 
+-----
+
 ```
 2491/2491
 Total files: 2489
@@ -69,7 +71,9 @@ Total soak operations: 4627
 ```
 
 "Total soak operations" includes all uses of soak synax:
-`a?.b`, `a?[b]`, `a?()`, `new A?()`, and `a?[b..c]`,
+`a?.b`, `a?[b]`, `a?()`, `new A?()`, and `a?[b..c]`.
+
+-----
 
 ```
 Total soaked member accesses: 3811
@@ -77,11 +81,15 @@ Total soaked member accesses: 3811
 
 A soaked member access is an expression like `a?.b`.
 
+-----
+
 ```
 Total soaked dynamic member accesses: 240
 ```
 
 A soaked dynamic member access is an expression like `a?[b]`.
+
+-----
 
 ```
 Total soaked function applications: 576
@@ -89,11 +97,15 @@ Total soaked function applications: 576
 
 A soaked function application is an expression like `a?()`.
 
+-----
+
 ```
 Total soaked new invocations: 0
 ```
 
 A soaked new invocation is an expression like `new A?()`.
+
+-----
 
 ```
 Total soak operations using short-circuiting: 1522
@@ -110,14 +122,16 @@ Examples:
 Non-examples:
 * `a(b?.c)`
 
+-----
+
 ```
 Total soak operations using short-circuiting (excluding methods): 233
 ```
 
-This is the same as the previous statistic, except that it intentionally
-excludes expressions of the form `a?.b()`. In other words, the vast majority of
-short circuiting in practice is only used for method call syntax and doesn't
-extend beyond that.
+This is the same as the previous statistic, except that it excludes expressions
+of the form `a?.b()`. In other words, the vast majority of short circuiting in
+practice is only used for method call syntax and doesn't extend beyond that, and
+this stat counts the number of cases that *do* extend beyond that.
 
 Examples:
 * `a?.b.c`
@@ -127,6 +141,8 @@ Non-examples:
 * `a?.b()`
 * `a?.b(c, d, e)`
 
+-----
+
 ```
 Total soaked assignments (including compound assignments): 37
 ```
@@ -134,13 +150,19 @@ Total soaked assignments (including compound assignments): 37
 A soaked assignment is an expression like `a?.b = c`. A soaked compound
 assignment is an expression like `a?.b += c`.
 
-This does **not** include cases like `a = b?.c`.
+This does **not** include cases like `a = b?.c`. It's only cases where the
+assignment would be skipped if the soaked expression evaluates to `null` or
+`undefined`.
+
+-----
 
 ```
 Total soaked deletes: 1
 ```
 
 A soaked delete is an expression like `delete a?.b`.
+
+-----
 
 ```
 Total cases where parens affected the soak container: 0
@@ -149,6 +171,8 @@ Total cases where parens affected the soak container: 0
 This counts cases where the existence of parentheses affected the evaluation of
 a soak operation. For example, `(a?.b).c` crashes if `a` is null or undefined,
 even though `a?.b.c` does not crash in that case.
+
+-----
 
 ```
 Total soak operations chained on top of another soak: 564
