@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Collect statistics on ?. syntax used in CoffeeScript projects",
   "main": "dist/cli.js",
+  "bin": {
+    "coffeescript-soak-stats": "./bin/coffeescript-soak-stats"
+  },
   "scripts": {
     "build": "script/build",
     "test": "mocha test"
