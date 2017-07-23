@@ -7,6 +7,10 @@
     "build": "script/build",
     "test": "mocha test"
   },
+  "files": [
+    "bin",
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alangpierce/coffeescript-soak-stats.git"
@@ -18,16 +22,18 @@
   },
   "homepage": "https://github.com/alangpierce/coffeescript-soak-stats#readme",
   "dependencies": {
-    "@types/mocha": "^2.2.41",
     "@types/mz": "^0.0.31",
     "@types/node": "^8.0.14",
     "coffee-lex": "^8.0.0",
     "core-js": "^2.4.1",
     "decaffeinate-parser": "^19.1.0",
-    "mocha": "^3.4.2",
     "mz": "^2.6.0",
+    "tslib": "^1.7.1"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.2.41",
+    "mocha": "^3.4.2",
     "ts-node": "^3.2.1",
-    "tslib": "^1.7.1",
     "tslint": "^5.5.0",
     "typescript": "^2.4.2"
   }
