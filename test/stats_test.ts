@@ -45,4 +45,10 @@ describe('stats', () => {
     equal(stats.numNonTrivialSoakContainers, 1);
     equal(stats.numNonTrivialSoakContainersExcludingMethods, 1);
   });
+
+  it('recognizes soaked new operations', () => {
+    const stats = getStats('new A?()');
+    equal(stats.numSoakOperations, 1);
+    equal(stats.numSoakedNew, 1);
+  });
 });

@@ -2,7 +2,7 @@ import { parse, traverse } from 'decaffeinate-parser';
 import {
   BaseAssignOp, DeleteOp, FunctionApplication,
   SoakedDynamicMemberAccessOp, SoakedFunctionApplication, SoakedMemberAccessOp,
-  SoakedNewOp, SoakedSlice
+  SoakedNewOp
 } from 'decaffeinate-parser/dist/nodes';
 import { findSoakContainer, isSoakOperation } from './soak-operations';
 
@@ -14,7 +14,6 @@ export class Stats {
   numSoakedDynamicMemberAccesses = 0;
   numSoakedFunctionApplications = 0;
   numSoakedNew = 0;
-  numSoakedSlice = 0;
   numNonTrivialSoakContainers = 0;
   numNonTrivialSoakContainersExcludingMethods = 0;
   numSoakedAssignments = 0;
@@ -30,7 +29,6 @@ Total soaked member accesses: ${this.numSoakedMemberAccesses}
 Total soaked dynamic member accesses: ${this.numSoakedDynamicMemberAccesses}
 Total soaked function applications: ${this.numSoakedFunctionApplications}
 Total soaked new invocations: ${this.numSoakedNew}
-Total soaked slice calls: ${this.numSoakedSlice}
 Total soak operations using short-circuiting: ${this.numNonTrivialSoakContainers}
 Total soak operations using short-circuiting (excluding methods): ${this.numNonTrivialSoakContainersExcludingMethods}
 Total soaked assignments (including compound assignments): ${this.numSoakedAssignments}
@@ -54,8 +52,6 @@ export function collectStats(source: string, stats: Stats): void {
       stats.numSoakedFunctionApplications++;
     } else if (node instanceof SoakedNewOp) {
       stats.numSoakedNew++;
-    } else if (node instanceof SoakedSlice) {
-      stats.numSoakedSlice++;
     }
     if (isSoakOperation(node)) {
       stats.numSoakOperations++;
