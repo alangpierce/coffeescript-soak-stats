@@ -1,6 +1,6 @@
 {
   "name": "coffeescript-soak-stats",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Collect statistics on ?. syntax used in CoffeeScript projects",
   "main": "dist/cli.js",
   "bin": {
