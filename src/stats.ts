@@ -4,7 +4,9 @@ import {
   SoakedDynamicMemberAccessOp, SoakedFunctionApplication, SoakedMemberAccessOp,
   SoakedNewOp
 } from 'decaffeinate-parser/dist/nodes';
-import { findSoakContainer, isSoakOperation } from './soak-operations';
+import {
+  findSoakContainer, isSoakedExpression, isSoakOperation
+} from './soak-operations';
 
 export class Stats {
   totalFiles = 0;
@@ -19,6 +21,7 @@ export class Stats {
   numSoakedAssignments = 0;
   numSoakedDeletes = 0;
   numSignificantParens = 0;
+  numChainedSoakOperations = 0;
 
   format(): string {
     return `\
@@ -34,7 +37,7 @@ Total soak operations using short-circuiting (excluding methods): ${this.numNonT
 Total soaked assignments (including compound assignments): ${this.numSoakedAssignments}
 Total soaked deletes: ${this.numSoakedDeletes}
 Total cases where parens affected the soak container: ${this.numSignificantParens}
-`;
+Total soak operations chained on top of another soak: ${this.numChainedSoakOperations}`;
   }
 }
 
@@ -73,6 +76,9 @@ export function collectStats(source: string, stats: Stats): void {
       }
       if (soakContainer !== soakContainerIgnoringParens) {
         stats.numSignificantParens++;
+      }
+      if (isSoakedExpression(soakContainer)) {
+        stats.numChainedSoakOperations++;
       }
     }
   });

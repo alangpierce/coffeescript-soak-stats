@@ -10,7 +10,7 @@ import {
   SoakedMemberAccessOp, SoakedNewOp, SoakedProtoMemberAccessOp, SoakedSlice
 } from 'decaffeinate-parser/dist/nodes';
 
-export function isSoakOperation(node: Node): boolean {
+export function isSoakOperation(node: Node | null): boolean {
   return node instanceof SoakedMemberAccessOp ||
     node instanceof SoakedDynamicMemberAccessOp ||
     node instanceof SoakedFunctionApplication ||
@@ -18,6 +18,27 @@ export function isSoakOperation(node: Node): boolean {
     node instanceof SoakedNewOp ||
     node instanceof SoakedSlice;
 }
+
+/**
+ * Determine if this is the soaked operand of a soak container.
+ * In other words, the `a` in `a?.b`, `a?[b]`, or `a?(b, c)`.
+ */
+export function isSoakedExpression(node: Node): boolean {
+  if (node.parentNode instanceof SoakedMemberAccessOp &&
+      node.parentNode.expression === node) {
+    return true;
+  }
+  if (node.parentNode instanceof SoakedDynamicMemberAccessOp &&
+    node.parentNode.expression === node) {
+    return true;
+  }
+  if (node.parentNode instanceof SoakedFunctionApplication &&
+    node.parentNode.function === node) {
+    return true;
+  }
+  return false;
+}
+
 
 export function findSoakContainer(
     node: Node, tokens: SourceTokenList, {ignoreParens = false} = {}): Node {

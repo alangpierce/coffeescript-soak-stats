@@ -51,4 +51,14 @@ describe('stats', () => {
     equal(stats.numSoakOperations, 1);
     equal(stats.numSoakedNew, 1);
   });
+
+  it('does not view regular chained member access as chained soak', () => {
+    const stats = getStats('a?.b.c.d.e');
+    equal(stats.numChainedSoakOperations, 0);
+  });
+
+  it('counts multiple chained soaks in a single chain', () => {
+    const stats = getStats('a?.b.c?.d?.e');
+    equal(stats.numChainedSoakOperations, 2);
+  });
 });
