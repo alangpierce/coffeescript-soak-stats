@@ -18,6 +18,7 @@ export class Stats {
   numNonTrivialSoakContainers = 0;
   numSoakedAssignments = 0;
   numSoakedDeletes = 0;
+  numSignificantParens = 0;
 
   format(): string {
     return `\
@@ -32,6 +33,7 @@ Total soaked slice calls: ${this.numSoakedSlice}
 Total soak operations using short-circuiting: ${this.numNonTrivialSoakContainers}
 Total soaked assignments (including compound assignments): ${this.numSoakedAssignments}
 Total soaked deletes: ${this.numSoakedDeletes}
+Total cases where parens affected the soak container: ${this.numSignificantParens}
 `;
   }
 }
@@ -56,6 +58,7 @@ export function collectStats(source: string, stats: Stats): void {
     if (isSoakOperation(node)) {
       stats.numSoakOperations++;
       const soakContainer = findSoakContainer(node, tokens);
+      const soakContainerIgnoringParens = findSoakContainer(node, tokens, {ignoreParens: true});
       if (soakContainer !== node) {
         stats.numNonTrivialSoakContainers++;
       }
@@ -64,6 +67,9 @@ export function collectStats(source: string, stats: Stats): void {
       }
       if (soakContainer instanceof DeleteOp) {
         stats.numSoakedDeletes++;
+      }
+      if (soakContainer !== soakContainerIgnoringParens) {
+        stats.numSignificantParens++;
       }
     }
   });

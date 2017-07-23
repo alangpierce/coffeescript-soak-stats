@@ -19,9 +19,10 @@ export function isSoakOperation(node: Node): boolean {
     node instanceof SoakedSlice;
 }
 
-export function findSoakContainer(node: Node, tokens: SourceTokenList): Node {
+export function findSoakContainer(
+    node: Node, tokens: SourceTokenList, {ignoreParens = false} = {}): Node {
   let result = node;
-  while (canParentHandleSoak(result, tokens)) {
+  while (canParentHandleSoak(result, tokens, ignoreParens)) {
     if (!result.parentNode) {
       throw new Error('Expected parent node.');
     }
@@ -30,11 +31,11 @@ export function findSoakContainer(node: Node, tokens: SourceTokenList): Node {
   return result;
 }
 
-function canParentHandleSoak(node: Node, tokens: SourceTokenList): boolean {
+function canParentHandleSoak(node: Node, tokens: SourceTokenList, ignoreParens: boolean): boolean {
   if (node.parentNode === null) {
     return false;
   }
-  if (isSurroundedByParens(node, tokens)) {
+  if (!ignoreParens && isSurroundedByParens(node, tokens)) {
     return false;
   }
   if (node.parentNode instanceof MemberAccessOp) {

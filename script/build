@@ -24,3 +24,8 @@ echo 'Building CommonJS version.'
   --outDir "${DIST}" \
   --module commonjs \
   --moduleResolution node
+
+# Restructure.
+rm -rf dist/test
+mv dist/src/* dist/
+rmdir dist/src
