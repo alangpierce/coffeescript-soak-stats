@@ -61,4 +61,14 @@ describe('stats', () => {
     const stats = getStats('a?.b.c?.d?.e');
     equal(stats.numChainedSoakOperations, 2);
   });
+
+  it('counts a soaked assignment LHS as a soaked assignment', () => {
+    const stats = getStats('a?.b = c');
+    equal(stats.numSoakedAssignments, 1);
+  });
+
+  it('does not count a soaked assignment RHS as a soaked assignment', () => {
+    const stats = getStats('a = b?.c');
+    equal(stats.numSoakedAssignments, 0);
+  });
 });
