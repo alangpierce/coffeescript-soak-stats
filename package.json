@@ -29,6 +29,7 @@
     "@types/node": "^8.0.14",
     "coffee-lex": "^8.0.0",
     "core-js": "^2.4.1",
+    "decaffeinate": "^3.3.16",
     "decaffeinate-parser": "^19.1.0",
     "lines-and-columns": "^1.1.6",
     "mz": "^2.6.0",

@@ -22,22 +22,22 @@ representative of real-world code.
 Here's what it prints when running stats on all of them:
 
 ```
-Error processing file atom/atom/spec/fixtures/sample-with-tabs-and-leading-comment.coffee
-Error processing file repos/sharelatex/latex-hints-sharelatex/public/app/ide/controllers/LatexHintsController.coffee
-2491/2491
-Total files: 2489
-Total lines: 475208
-Total soak operations: 4627
-Total soaked member accesses: 3811
-Total soaked dynamic member accesses: 240
-Total soaked function applications: 576
+Error processing file manual_test/sharelatex/latex-hints-sharelatex/public/app/ide/controllers/LatexHintsController.coffee
+2297/2297
+Total files: 2296
+Total lines: 453254
+Total soak operations: 4447
+Total soaked member accesses: 3674
+Total soaked dynamic member accesses: 244
+Total soaked function applications: 529
 Total soaked new invocations: 0
-Total soak operations using short-circuiting: 1522
-Total soak operations using short-circuiting (excluding methods): 233
-Total soaked assignments (including compound assignments): 37
+Total soak operations using short-circuiting: 1394
+Total soak operations using short-circuiting (excluding methods): 225
+Total soaked assignments (including compound assignments): 36
 Total soaked deletes: 1
 Total cases where parens affected the soak container: 0
-Total soak operations chained on top of another soak: 564
+Total soak operations chained on top of another soak: 590
+Total accesses of undeclared globals in soak operations: 74
 ```
 
 ### Definitions
@@ -54,20 +54,18 @@ undefined. For example, in the expression `a(b?.c.d)`, the soak container is
 ### Explanation of each stat
 
 ```
-Error processing file atom/atom/spec/fixtures/sample-with-tabs-and-leading-comment.coffee
 Error processing file sharelatex/latex-hints-sharelatex/public/app/ide/controllers/LatexHintsController.coffee
 ```
 
-These two files are both invalid CoffeeScript files. The first is a test fixture
-that's presumably meant to test invalid files, not sure about the second.
+This is an invalid CoffeeScript file.
 
 -----
 
 ```
-2491/2491
-Total files: 2489
-Total lines: 475208
-Total soak operations: 4627
+2297/2297
+Total files: 2296
+Total lines: 453254
+Total soak operations: 4447
 ```
 
 "Total soak operations" includes all uses of soak synax:
@@ -76,7 +74,7 @@ Total soak operations: 4627
 -----
 
 ```
-Total soaked member accesses: 3811
+Total soaked member accesses: 3674
 ```
 
 A soaked member access is an expression like `a?.b`.
@@ -84,7 +82,7 @@ A soaked member access is an expression like `a?.b`.
 -----
 
 ```
-Total soaked dynamic member accesses: 240
+Total soaked dynamic member accesses: 244
 ```
 
 A soaked dynamic member access is an expression like `a?[b]`.
@@ -92,7 +90,7 @@ A soaked dynamic member access is an expression like `a?[b]`.
 -----
 
 ```
-Total soaked function applications: 576
+Total soaked function applications: 529
 ```
 
 A soaked function application is an expression like `a?()`.
@@ -108,7 +106,7 @@ A soaked new invocation is an expression like `new A?()`.
 -----
 
 ```
-Total soak operations using short-circuiting: 1522
+Total soak operations using short-circuiting: 1394
 ```
 
 A soak expression counts toward this stat if the expression evaluating to null
@@ -125,7 +123,7 @@ Non-examples:
 -----
 
 ```
-Total soak operations using short-circuiting (excluding methods): 233
+Total soak operations using short-circuiting (excluding methods): 225
 ```
 
 This is the same as the previous statistic, except that it excludes expressions
@@ -144,7 +142,7 @@ Non-examples:
 -----
 
 ```
-Total soaked assignments (including compound assignments): 37
+Total soaked assignments (including compound assignments): 36
 ```
 
 A soaked assignment is an expression like `a?.b = c`. A soaked compound
@@ -175,7 +173,7 @@ even though `a?.b.c` does not crash in that case.
 -----
 
 ```
-Total soak operations chained on top of another soak: 564
+Total soak operations chained on top of another soak: 590
 ```
 
 This counts cases like `a?.b?.c?.d`, where the code explicitly uses multiple
@@ -185,3 +183,13 @@ in a non-initial position in a chain, so `a?.b?.c?.d` adds 2 to this stat,
 
 This is meant to help understand how common it is to explicitly use multiple
 soak opertions in a row vs. relying on short circuiting.
+-----
+
+```
+Total accesses of undeclared globals in soak operations: 74
+```
+
+This counts cases like `window?.a`, where `window` is never declared in this
+scope (or a parent scope). In other words, these instances rely on the behavior
+that `a?.b` evaluates to `undefined` rather than crashing when `a` is an
+undeclared variable and isn't in the global scope.

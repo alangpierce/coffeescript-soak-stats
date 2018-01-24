@@ -71,4 +71,34 @@ describe('stats', () => {
     const stats = getStats('a = b?.c');
     equal(stats.numSoakedAssignments, 0);
   });
+
+  it('detects accesses to undeclared globals', () => {
+    const stats = getStats(`
+      a = {}
+      b = a?.x
+      c = d?.y
+    `);
+    equal(stats.numUndeclaredGlobalAccesses, 1);
+  });
+
+  it('respects scope when detecting undeclared globals', () => {
+    const stats = getStats(`
+      f = ->
+        a = {}
+        a?.b
+      g = ->
+        a?.c
+      a?.d
+    `);
+    // The second and third usages are undeclared global accesses.
+    equal(stats.numUndeclaredGlobalAccesses, 2);
+  });
+
+  it('treats function parameters as declared variables', () => {
+    const stats = getStats(`
+      f = (a) ->
+        a?.b
+    `);
+    equal(stats.numUndeclaredGlobalAccesses, 0);
+  });
 });

@@ -1,13 +1,14 @@
-import { parse, traverse } from 'decaffeinate-parser';
+import { traverse } from 'decaffeinate-parser';
 import {
   BaseAssignOp, DeleteOp, FunctionApplication,
   SoakedDynamicMemberAccessOp, SoakedFunctionApplication, SoakedMemberAccessOp,
-  SoakedNewOp, Node,
+  SoakedNewOp, Node, Identifier,
 } from 'decaffeinate-parser/dist/nodes';
 import {
   findSoakContainer, isSoakedExpression, isSoakOperation
 } from './soak-operations';
 import { formatExample } from './examples';
+import DecaffeinateContext from 'decaffeinate/dist/utils/DecaffeinateContext';
 
 export class Stats {
   totalFiles = 0;
@@ -23,6 +24,7 @@ export class Stats {
   numSoakedDeletes = 0;
   numSignificantParens = 0;
   numChainedSoakOperations = 0;
+  numUndeclaredGlobalAccesses = 0;
   exampleContents = '';
 
   format(): string {
@@ -39,12 +41,14 @@ Total soak operations using short-circuiting (excluding methods): ${this.numNonT
 Total soaked assignments (including compound assignments): ${this.numSoakedAssignments}
 Total soaked deletes: ${this.numSoakedDeletes}
 Total cases where parens affected the soak container: ${this.numSignificantParens}
-Total soak operations chained on top of another soak: ${this.numChainedSoakOperations}`;
+Total soak operations chained on top of another soak: ${this.numChainedSoakOperations}
+Total accesses of undeclared globals in soak operations: ${this.numUndeclaredGlobalAccesses}`;
   }
 }
 
 export function collectStats(source: string, stats: Stats, path: string): void {
-  const program = parse(source);
+  const context = DecaffeinateContext.create(source);
+  const program = context.programNode;
   const tokens = program.context.sourceTokens;
   stats.totalFiles++;
   stats.totalLines += source.split('\n').length;
@@ -82,9 +86,19 @@ export function collectStats(source: string, stats: Stats, path: string): void {
       if (isSoakedExpression(soakContainer)) {
         stats.numChainedSoakOperations++;
       }
-
       if (process.env.PRINT_EXAMPLES === 'true' && shouldShowExample(node, soakContainer)) {
         stats.exampleContents += formatExample(node, source, path);
+      }
+    }
+
+    if (isSoakedExpression(node) && node instanceof Identifier) {
+      const name = node.data;
+      const scope = context.getScope(node);
+      if (!scope.hasBinding(name)) {
+        stats.numUndeclaredGlobalAccesses++;
+        if (process.env.UNDECLARED_ACCESS_EXAMPLES) {
+          stats.exampleContents += formatExample(node, source, path);
+        }
       }
     }
   });
