@@ -183,6 +183,7 @@ in a non-initial position in a chain, so `a?.b?.c?.d` adds 2 to this stat,
 
 This is meant to help understand how common it is to explicitly use multiple
 soak opertions in a row vs. relying on short circuiting.
+
 -----
 
 ```
